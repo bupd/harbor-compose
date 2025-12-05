@@ -34,7 +34,7 @@ services:
       - SETGID
       - SETUID
     volumes:
-      - ./storage/registry:/storage:z
+      - ./storage/registry:/storage
       # - ./registry/:/etc/registry/:z
       - type: bind
         source: ./config/registry/registry-passwd
@@ -78,27 +78,29 @@ services:
   #     - harbor
   #   depends_on:
   #     # - log
-  # postgresql:
-  #   image: goharbor/harbor-db:v2.14.0
-  #   container_name: harbor-db
-  #   restart: always
-  #   cap_drop:
-  #     - ALL
-  #   cap_add:
-  #     - CHOWN
-  #     - DAC_OVERRIDE
-  #     - SETGID
-  #     - SETUID
-  #   volumes:
-  #     - ./opt/harbor-podman/database:/var/lib/postgresql/data:z
-  #   ports:
-  #     - 127.0.0.1:5443:5432
-  #   networks:
-  #     harbor:
-  #   env_file:
-  #     - ./common/config/db/env
-  #   depends_on:
-  #     # - log
+
+  postgresql:
+    image: postgres:18.1
+    container_name: harbor-db
+    restart: always
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - SETGID
+      - SETUID
+    volumes:
+      - harbor-db-data:/var/lib/postgresql
+    ports:
+      - 127.0.0.1:5443:5432
+    networks:
+      harbor:
+    env_file:
+      - ./config/db/env
+    # depends_on:
+      # - log
+
   # core:
   #   # image: goharbor/harbor-core:v2.14.0
   #   image: 8gears.container-registry.com/8gcr-dev/harbor-core:commercial-branding
@@ -243,6 +245,9 @@ services:
   #     - type: bind
   #       source: ./common/config/shared/trust-certificates
   #       target: /harbor_cust_cert
+
+volumes:
+  harbor-db-data:
 
 networks:
   harbor:
