@@ -128,41 +128,41 @@ services:
     # depends_on:
     #   - log
 
-  # core:
-  #   # image: goharbor/harbor-core:v2.14.0
-  #   image: 8gears.container-registry.com/8gcr-dev/harbor-core:commercial-branding
-  #   container_name: harbor-core
-  #   env_file:
-  #     - ./common/config/core/env
-  #   restart: always
-  #   cap_drop:
-  #     - ALL
-  #   cap_add:
-  #     - SETGID
-  #     - SETUID
-  #   volumes:
-  #     - ./opt/harbor-podman/ca_download/:/etc/core/ca/:z
-  #     - ./opt/harbor-podman/:/data/:z
-  #     - ./common/config/core/certificates/:/etc/core/certificates/:z
-  #     - type: bind
-  #       source: ./common/config/core/app.conf
-  #       target: /etc/core/app.conf
-  #     - type: bind
-  #       source: ./opt/harbor-podman/secret/core/private_key.pem
-  #       target: /etc/core/private_key.pem
-  #     - type: bind
-  #       source: ./opt/harbor-podman/secret/keys/secretkey
-  #       target: /etc/core/key
-  #     - type: bind
-  #       source: ./common/config/shared/trust-certificates
-  #       target: /harbor_cust_cert
-  #   networks:
-  #     harbor:
-  #   depends_on:
-  #     # - log
-  #     - registry
-  #     - redis
-  #     - postgresql
+  core:
+    image: goharbor/harbor-core:v2.14.0
+    container_name: harbor-core
+    env_file:
+      - ./config/core/env
+    restart: always
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETGID
+      - SETUID
+    volumes:
+      - ./ca_download:/etc/core/ca/
+      - ./storage/core:/data/
+      - ./config/core/certificates/:/etc/core/certificates/
+      - type: bind
+        source: ./config/core/app.conf
+        target: /etc/core/app.conf
+      # only needed when you want https
+      - type: bind
+        source: ./config/secret/core/secret/private_key.pem
+        target: /etc/core/private_key.pem
+      - type: bind
+        source: ./config/secret/core/secret/secretkey
+        target: /etc/core/key
+      - type: bind
+        source: ./config/trust-certificates
+        target: /harbor_cust_cert
+    networks:
+      harbor:
+    depends_on:
+      # - log
+      - registry
+      - redis
+      - postgresql
 
   # jobservice:
   #   image: goharbor/harbor-jobservice:v2.14.0
