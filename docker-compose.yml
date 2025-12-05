@@ -179,7 +179,7 @@ services:
     volumes:
       - ./storage/job_logs:/var/log/jobs
       - type: bind
-        source: ./config/jobservice/config.yml
+        source: ./config/jobservice/jobservice-config.yml
         target: /etc/jobservice/config.yml
       - type: bind
         source: ./config/trust-certificates
