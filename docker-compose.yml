@@ -91,7 +91,8 @@ services:
       - SETGID
       - SETUID
     volumes:
-      - harbor-db-data:/var/lib/postgresql
+      - ./storage/postgres:/var/lib/postgresql
+      # - harbor-db-data:/var/lib/postgresql
     ports:
       - 127.0.0.1:5443:5432
     networks:
@@ -181,22 +182,24 @@ services:
   #     - harbor
   #   depends_on:
   #     - core
-  # redis:
-  #   image: goharbor/redis-photon:v2.14.0
-  #   container_name: redis
-  #   restart: always
-  #   cap_drop:
-  #     - ALL
-  #   cap_add:
-  #     - CHOWN
-  #     - SETGID
-  #     - SETUID
-  #   volumes:
-  #     - ./opt/harbor-podman/redis:/var/lib/redis
-  #   networks:
-  #     harbor:
-  #   depends_on:
-  #     # - log
+
+  redis:
+    image: valkey/valkey:8.1.5-alpine3.23
+    container_name: redis
+    restart: always
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    volumes:
+      - harbor-redis-data:/data
+    networks:
+      harbor:
+    # depends_on:
+      # - log
+
   # proxy:
   #   image: goharbor/nginx-photon:v2.14.0
   #   container_name: nginx
@@ -248,6 +251,7 @@ services:
 
 volumes:
   harbor-db-data:
+  harbor-redis-data:
 
 networks:
   harbor:
