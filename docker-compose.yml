@@ -93,31 +93,40 @@ services:
     # depends_on:
       # - log
 
-  # registryctl:
-  #   image: goharbor/harbor-registryctl:v2.14.0
-  #   container_name: registryctl
-  #   env_file:
-  #     - ./common/config/registryctl/env
-  #   restart: always
-  #   cap_drop:
-  #     - ALL
-  #   cap_add:
-  #     - CHOWN
-  #     - SETGID
-  #     - SETUID
-  #   volumes:
-  #     - ./opt/harbor-podman/registry:/storage:z
-  #     - ./common/config/registry/:/etc/registry/:z
-  #     - type: bind
-  #       source: ./common/config/registryctl/config.yml
-  #       target: /etc/registryctl/config.yml
-  #     - type: bind
-  #       source: ./common/config/shared/trust-certificates
-  #       target: /harbor_cust_cert
-  #   networks:
-  #     - harbor
-  #   depends_on:
-  #     # - log
+  registryctl:
+    image: goharbor/harbor-registryctl:v2.14.0
+    container_name: registryctl
+    env_file:
+      - ./config/registryctl/env
+    restart: always
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    volumes:
+      - ./storage/registry:/storage
+      # - ./registry/:/etc/registry/:z
+      - type: bind
+        source: ./config/registry/registry-passwd
+        target: /etc/registry/passwd
+      - type: bind
+        source: ./config/registry/registry-config.yml
+        target: /etc/registry/config.yml
+      - type: bind
+        source: ./config/registry/root.crt
+        target: /etc/registry/root.crt
+      - type: bind
+        source: ./config/trust-certificates
+        target: /harbor_cust_cert
+      - type: bind
+        source: ./config/registryctl/registryctl-config.yml
+        target: /etc/registryctl/config.yml
+    networks:
+      - harbor
+    # depends_on:
+    #   - log
 
   # core:
   #   # image: goharbor/harbor-core:v2.14.0
