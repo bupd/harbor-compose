@@ -164,31 +164,30 @@ services:
       - redis
       - postgresql
 
-  # jobservice:
-  #   image: goharbor/harbor-jobservice:v2.14.0
-  #   # image: 8gears.container-registry.com/8gcr-dev/harbor-jobservice:commercial-federated-idp
-  #   container_name: harbor-jobservice
-  #   env_file:
-  #     - ./common/config/jobservice/env
-  #   restart: always
-  #   cap_drop:
-  #     - ALL
-  #   cap_add:
-  #     - CHOWN
-  #     - SETGID
-  #     - SETUID
-  #   volumes:
-  #     - ./storage/job_logs:/var/log/jobs:z
-  #     - type: bind
-  #       source: ./common/config/jobservice/config.yml
-  #       target: /etc/jobservice/config.yml
-  #     - type: bind
-  #       source: ./common/config/shared/trust-certificates
-  #       target: /harbor_cust_cert
-  #   networks:
-  #     - harbor
-  #   depends_on:
-  #     - core
+  jobservice:
+    image: goharbor/harbor-jobservice:v2.14.0
+    container_name: harbor-jobservice
+    env_file:
+      - ./config/jobservice/env
+    restart: always
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    volumes:
+      - ./storage/job_logs:/var/log/jobs
+      - type: bind
+        source: ./config/jobservice/config.yml
+        target: /etc/jobservice/config.yml
+      - type: bind
+        source: ./config/trust-certificates
+        target: /harbor_cust_cert
+    networks:
+      - harbor
+    depends_on:
+      - core
 
   # portal:
   #   # image: goharbor/harbor-portal:v2.14.0
